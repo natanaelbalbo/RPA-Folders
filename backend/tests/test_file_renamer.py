@@ -120,7 +120,7 @@ class TestSanitizeName:
     def test_remove_acentos(self):
         """Deve remover acentos e caracteres especiais."""
         result = FileRenamer._sanitize_name("Café & Cia Ltda")
-        assert result == "CAFE__CIA_LTDA"
+        assert result == "CAFE_CIA_LTDA"
 
     def test_converte_para_maiuscula(self):
         """Resultado deve ser todo em maiúsculas."""

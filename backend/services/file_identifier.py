@@ -95,7 +95,9 @@ class FileIdentifier:
             # Busca data de emissão
             ide = root.find(f".//{ns}ide")
             if ide is not None:
-                data_elem = ide.find(f"{ns}dhEmi") or ide.find(f"{ns}dEmi")
+                data_elem = ide.find(f"{ns}dhEmi")
+                if data_elem is None:
+                    data_elem = ide.find(f"{ns}dEmi")
                 if data_elem is not None and data_elem.text:
                     result.data = data_elem.text[:10]  # YYYY-MM-DD
 
@@ -127,8 +129,11 @@ class FileIdentifier:
 
             # Busca CNPJ
             cnpj_matches = CNPJ_REGEX.findall(text)
-            if cnpj_matches:
-                result.empresa_cnpj = self._format_cnpj(cnpj_matches[0])
+            for match in cnpj_matches:
+                digits = re.sub(r"\D", "", match)
+                if len(digits) == 14 and not digits.startswith("202"):
+                    result.empresa_cnpj = self._format_cnpj(match)
+                    break
 
             # Classificação do tipo baseada em palavras-chave
             text_lower = text.lower()
@@ -185,8 +190,11 @@ class FileIdentifier:
 
             # Busca CNPJ no conteúdo (pode estar em memo ou descrição)
             cnpj_matches = CNPJ_REGEX.findall(content)
-            if cnpj_matches:
-                result.empresa_cnpj = self._format_cnpj(cnpj_matches[0])
+            for match in cnpj_matches:
+                digits = re.sub(r"\D", "", match)
+                if len(digits) == 14 and not digits.startswith("202"):
+                    result.empresa_cnpj = self._format_cnpj(match)
+                    break
 
             # Busca nome em tags comuns
             name_match = re.search(r"<NAME>(.+?)(?:\n|<)", content)
