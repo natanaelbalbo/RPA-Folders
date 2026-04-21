@@ -61,7 +61,7 @@ export function SistemaPage({ onMenuClick }) {
     }
   };
 
-  // ─── VISUALIZAÇÃO DE PASTA ───
+
   if (selectedFolder && empresaData) {
     const folderCfg = FOLDER_CONFIG[selectedFolder];
     const FolderIcon = folderCfg.icon;
@@ -80,6 +80,7 @@ export function SistemaPage({ onMenuClick }) {
             Voltar
           </Button>
 
+          {/* Área de Upload */}
           <Card className="border-dashed border-2 border-primary/30 bg-primary/5">
             <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
               <Upload className="mb-4 h-12 w-12 text-primary/50" />
@@ -103,6 +104,7 @@ export function SistemaPage({ onMenuClick }) {
             </div>
           </Card>
 
+          {/* Arquivos na Pasta */}
           <Card>
             <CardHeader className="border-b border-border/50 pb-4">
               <CardTitle className="flex items-center gap-2 text-base lg:text-lg">
@@ -148,7 +150,7 @@ export function SistemaPage({ onMenuClick }) {
     );
   }
 
-  // ─── PASTAS DA EMPRESA ───
+
   if (selectedEmpresa) {
     return (
       <div className="min-h-screen">
@@ -163,6 +165,7 @@ export function SistemaPage({ onMenuClick }) {
             Voltar
           </Button>
 
+          {/* Pastas da Empresa */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
             {Object.entries(FOLDER_CONFIG).map(([key, cfg], i) => {
               const Icon = cfg.icon;
@@ -191,7 +194,7 @@ export function SistemaPage({ onMenuClick }) {
     );
   }
 
-  // ─── SELEÇÃO DE EMPRESA ───
+
   return (
     <div className="min-h-screen">
       <Header 
@@ -200,6 +203,7 @@ export function SistemaPage({ onMenuClick }) {
         onMenuClick={onMenuClick} 
       />
       <div className="p-4 lg:p-6">
+        {/* Seleção de Empresa */}
         {empresas.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <Building2 className="mb-6 h-16 w-16 text-muted-foreground/20" />

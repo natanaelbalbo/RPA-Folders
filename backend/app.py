@@ -60,9 +60,7 @@ system_state = {
 }
 
 
-# ═══════════════════════════════════════════════
 # ENDPOINTS DE STATUS
-# ═══════════════════════════════════════════════
 
 @app.get("/api/status")
 def get_status(db: Session = Depends(get_db)):
@@ -85,9 +83,7 @@ def get_status(db: Session = Depends(get_db)):
     }
 
 
-# ═══════════════════════════════════════════════
 # ENDPOINTS DE EMPRESAS
-# ═══════════════════════════════════════════════
 
 @app.get("/api/empresas")
 def list_empresas(db: Session = Depends(get_db)):
@@ -118,9 +114,7 @@ def get_empresa(empresa_id: int, db: Session = Depends(get_db)):
     }
 
 
-# ═══════════════════════════════════════════════
 # ENDPOINTS DE ARQUIVOS
-# ═══════════════════════════════════════════════
 
 @app.get("/api/arquivos")
 def list_arquivos(
@@ -157,9 +151,7 @@ def list_arquivos(
     return [a.to_dict() for a in arquivos]
 
 
-# ═══════════════════════════════════════════════
 # ENDPOINTS DE PROCESSAMENTO
-# ═══════════════════════════════════════════════
 
 @app.post("/api/processar")
 async def processar_drive(db: Session = Depends(get_db)):
@@ -359,9 +351,7 @@ async def reprocessar_arquivo(arquivo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ═══════════════════════════════════════════════
 # ENDPOINTS DO SISTEMA DESTINO (Login + Upload)
-# ═══════════════════════════════════════════════
 
 @app.post("/api/auth/login")
 def login(credentials: dict):
@@ -428,9 +418,7 @@ async def upload_file(
     return {"mensagem": "Upload realizado com sucesso", "arquivo": arquivo.to_dict()}
 
 
-# ═══════════════════════════════════════════════
 # ENDPOINTS DE HISTÓRICO
-# ═══════════════════════════════════════════════
 
 @app.get("/api/historico")
 def get_historico(
@@ -442,9 +430,7 @@ def get_historico(
     return [l.to_dict() for l in logs]
 
 
-# ═══════════════════════════════════════════════
 # STARTUP
-# ═══════════════════════════════════════════════
 
 @app.on_event("startup")
 def startup():
@@ -459,6 +445,6 @@ if __name__ == "__main__":
         host=API_HOST,
         port=API_PORT,
         reload=True,
-        reload_dirs=["."],           # Monitora só o código
-        reload_excludes=["venv/*"],  # Ignora a pasta venv
+        reload_dirs=["."],           
+        reload_excludes=["venv/*"],  
     )

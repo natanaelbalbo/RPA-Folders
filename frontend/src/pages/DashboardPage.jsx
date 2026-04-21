@@ -87,7 +87,7 @@ export function DashboardPage({ onMenuClick }) {
       />
 
       <div className="p-4 lg:p-6 space-y-6">
-        {/* Top Actions/Status */}
+        {/* Ações Principais / Status */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="flex h-2 w-2 animate-pulse rounded-full bg-success" />
@@ -106,7 +106,7 @@ export function DashboardPage({ onMenuClick }) {
           </div>
         </div>
 
-        {/* Metrics Grid */}
+        {/* Grade de Métricas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="animate-fade-in">
             <div className="flex items-center justify-between">
@@ -158,7 +158,7 @@ export function DashboardPage({ onMenuClick }) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Files Table */}
+          {/* Tabela de Arquivos Recentes */}
           <Card className="lg:col-span-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <CardTitle className="flex items-center gap-2 text-base lg:text-lg">
@@ -243,7 +243,7 @@ export function DashboardPage({ onMenuClick }) {
           </Card>
 
           <div className="space-y-6">
-            {/* Companies Quick View */}
+            {/* Visualização Rápida de Empresas */}
             <Card className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
               <CardHeader>
                 <CardTitle className="text-base lg:text-lg flex items-center gap-2">
@@ -264,7 +264,7 @@ export function DashboardPage({ onMenuClick }) {
               </CardContent>
             </Card>
 
-            {/* Recent History / Logs */}
+            {/* Histórico Recente e Logs */}
             <Card className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
               <CardHeader>
                 <CardTitle className="text-base lg:text-lg flex items-center gap-2">
