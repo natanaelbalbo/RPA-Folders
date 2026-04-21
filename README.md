@@ -1,183 +1,54 @@
-# 🤖 RPA Automation MVP
+# Projeto RPA - Sistema de Automacao e Identificacao de Arquivos
 
-Sistema de automação RPA que integra captura de arquivos do Google Drive, inteligência de identificação, interação com sistema web e dashboard de monitoramento.
+Este projeto e uma solucao completa de Automacao de Processos Roboticos (RPA) desenvolvida para resolver o desafio de captura, classificacao, processamento e monitoramento de documentos extraidos do Google Drive. O projeto esta estruturado em um backend (Python/FastAPI) responsavel pela logica de automacao e um frontend web (React/Vitest) que funciona tanto como destino para o upload quanto como painel de monitoramento.
 
-## 📋 Visão Geral
+## Requisitos do Desafio (Fases do Projeto)
 
-```
-Google Drive ➔ Motor Python ➔ Sistema Web ➔ Dashboard
-```
+O projeto foi totalmente arquitetado para cumprir as 4 fases exigidas:
 
-**Fluxo completo:**
-1. O robô acessa o Google Drive via API e baixa os arquivos (XML, PDF, OFX)
-2. O motor de identificação analisa cada arquivo para descobrir a empresa (CNPJ/Nome) e o tipo
-3. O arquivo é renomeado seguindo o padrão `DATA_EMPRESA_TIPO.extensão`
-4. Via Playwright, o robô faz login no sistema web e faz upload na pasta correta
-5. O dashboard exibe o status de tudo em tempo real
+### Fase 1: Entrada de Dados (Google Drive)
+O robo e capaz de acessar uma pasta no Google Drive de forma programatica utilizando a API oficial (via service account).
+O sistema gerencia e baixa 3 tipos de arquivos de entrada (arquivos simulados fornecidos em `backend/sample_files/`):
+- XML de NF-e
+- PDF de Nota de Servico
+- Extrato Bancario (PDF ou OFX)
 
-## 🛠 Stack Tecnológica
+### Fase 2: Motor de Identificacao
+Apos o download, o motor do robo abre cada arquivo e aplica lógicas de identificacao para descobrir:
+- Quem e a empresa (lendo e formatando o CNPJ e extraindo a Razao Social do documento).
+- Que tipo de arquivo e (usando regex e pesos por palavras-chave para diferenciar XML de NF-e, Notas Fiscais em PDF ou Extratos).
+Em seguida, o robo renomeia o arquivo seguindo rigorosamente o padrao exigido: `DATA_EMPRESA_TIPO.extensao` (Ex: `20260420_TECHSOLUTIONS_NFE.xml`).
 
-| Camada | Tecnologia |
-|--------|-----------|
-| Backend API | Python + FastAPI |
-| Automação Web | Playwright |
-| Google Drive | google-api-python-client |
-| Banco de Dados | SQLite + SQLAlchemy |
-| Frontend | React (Vite) + Tailwind CSS + shadcn/ui |
-| Leitura de PDF | pdfplumber |
-| Leitura de XML | xml.etree.ElementTree |
+### Fase 3: O Sistema Destino
+Foi criado um sistema web para atuacao do robo.
+O sistema possui a "Empresa Exemplo" cadastrada no banco de dados com 3 pastas internas logicas: `/XML`, `/NF` e `/Extratos`.
+O robo utiliza a biblioteca Playwright para abrir o navegador de forma autonoma (headless), realizar o login com as credenciais cadastradas, navegar ate a pasta correta da empresa alvo baseando-se no tipo do documento, e realizar o upload do arquivo devidamente renomeado.
 
-## 🚀 Como Rodar
+### Fase 4: Dashboard de Monitoramento
+O sistema web fornece uma experiencia de UI/UX sofisticada onde o usuario consegue visualizar e gerenciar o processamento atraves de um Dashboard completo. Funcionalidades incluidas:
+- Lista em tempo real de arquivos processados.
+- Lista interativa de empresas cadastradas e seus documentos associados.
+- Filtro de busca inteligente que permite buscar por Data/Hora (Hoje, 7 dias, Ultimo Mes) e Status/Tipo.
+- Painel de status em tempo real do sistema (Online).
+- Historico detalhado dos processamentos (logs das acoes da automacao).
+- Indicadores visuais claros de Status (Sucesso ou Erro) e navegacao para visualizar onde o arquivo foi armazenado.
+- Botao de recuperacao para acionar o reprocessamento imediato de arquivos que cairem no status de Erro.
 
-### Pré-requisitos
+## Como Executar
 
-- Python 3.10+
-- Node.js 18+
-- npm
+### Backend (Python/FastAPI)
+1. Navegue ate a pasta do backend: `cd backend`
+2. Crie e ative o ambiente virtual:
+   - Windows: `python -m venv venv` seguido de `.\venv\Scripts\activate`
+3. Instale as dependencias: `pip install -r requirements.txt`
+4. Execute o servidor: `python app.py` (A API iniciara em `http://localhost:8000`)
 
-### 1. Backend
+### Frontend (React)
+1. Navegue ate a pasta do frontend: `cd frontend`
+2. Instale as dependencias: `npm install`
+3. Execute o ambiente de desenvolvimento: `npm run dev`
 
-```bash
-cd backend
-
-# Criar ambiente virtual
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/Mac
-
-# Instalar dependências
-pip install -r requirements.txt
-
-# Instalar Playwright browsers
-playwright install chromium
-
-# Gerar arquivos de exemplo (PDFs)
-python generate_samples.py
-
-# Iniciar o servidor
-python app.py
-# ou: uvicorn app:app --reload --port 8000
-```
-
-O backend estará disponível em `http://localhost:8000`.
-
-### 2. Frontend
-
-```bash
-cd frontend
-
-# Instalar dependências
-npm install
-
-# Iniciar dev server
-npm run dev
-```
-
-O frontend estará disponível em `http://localhost:5173`.
-
-### 3. Configuração do Google Drive
-
-1. Acesse o [Google Cloud Console](https://console.cloud.google.com)
-2. Crie um novo projeto (ou use um existente)
-3. Ative a **Google Drive API**
-4. Crie uma **Service Account** em "Credenciais"
-5. Baixe o JSON da Service Account
-6. Coloque o arquivo em `backend/credentials/service_account.json`
-7. No Google Drive, compartilhe a pasta desejada com o e-mail da Service Account
-8. Defina a variável de ambiente:
-   ```bash
-   set GOOGLE_DRIVE_FOLDER_ID=seu_folder_id_aqui
-   ```
-
-## 📁 Estrutura do Projeto
-
-```
-RPA Teste/
-├── backend/
-│   ├── app.py                    # API FastAPI
-│   ├── config.py                 # Configurações
-│   ├── database.py               # Modelos SQLite
-│   ├── generate_samples.py       # Gerador de PDFs fake
-│   ├── requirements.txt          # Dependências Python
-│   ├── credentials/              # Credenciais Google (gitignored)
-│   ├── sample_files/             # Arquivos de exemplo
-│   │   ├── nfe_sample.xml
-│   │   ├── extrato_bancario.ofx
-│   │   └── (PDFs gerados pelo script)
-│   ├── services/
-│   │   ├── google_drive.py       # Integração Google Drive API
-│   │   ├── file_identifier.py    # Motor de identificação
-│   │   ├── file_renamer.py       # Renomeação de arquivos
-│   │   └── web_automation.py     # Automação Playwright
-│   └── uploads/                  # Arquivos processados
-│
-├── frontend/
-│   ├── src/
-│   │   ├── api/apiService.js     # Chamadas à API
-│   │   ├── components/           # Componentes reutilizáveis
-│   │   ├── lib/utils.js          # Utilitários
-│   │   └── pages/                # Páginas da aplicação
-│   │       ├── DashboardPage.jsx
-│   │       ├── SistemaPage.jsx
-│   │       ├── ArquivosPage.jsx
-│   │       └── AutomacaoPage.jsx
-│   └── package.json
-│
-├── .gitignore
-└── README.md
-```
-
-## 🔌 API Endpoints
-
-| Método | Endpoint | Descrição |
-|--------|---------|-----------|
-| GET | `/api/status` | Status do sistema |
-| GET | `/api/empresas` | Listar empresas |
-| GET | `/api/empresas/{id}` | Detalhes da empresa |
-| GET | `/api/arquivos` | Listar arquivos (com filtros) |
-| POST | `/api/processar` | Iniciar processamento do Drive |
-| POST | `/api/reprocessar/{id}` | Reprocessar arquivo com erro |
-| POST | `/api/auth/login` | Login no sistema |
-| POST | `/api/upload/{empresa_id}/{tipo}` | Upload de arquivo |
-| GET | `/api/historico` | Histórico de processamento |
-
-**Filtros disponíveis em `/api/arquivos`:**
-- `?status=SUCESSO|ERRO|PENDENTE|PROCESSANDO`
-- `?tipo=XML|NF|EXTRATO`
-- `?periodo=hoje|ontem|7dias`
-
-## 🧠 Motor de Identificação
-
-O motor analisa cada arquivo para descobrir:
-
-| Tipo | Método de Identificação |
-|------|------------------------|
-| **XML (NF-e)** | Parse XML, busca tags `<emit><CNPJ>` e `<emit><xNome>` |
-| **PDF (NF Serviço)** | Extrai texto com pdfplumber, busca padrões de CNPJ via regex, classifica por palavras-chave |
-| **OFX (Extrato)** | Parse do formato OFX, extrai `<ORG>`, `<NAME>` e `<CNPJ>` |
-
-**Padrão de renomeação:** `DATA_EMPRESA_TIPO.extensão`
-- Exemplo: `20260420_TECH_SOLUTIONS_LTDA_NFE.xml`
-
-## 🔐 Credenciais Padrão (Sistema Web)
-
-- **Usuário:** `admin`
-- **Senha:** `admin123`
-
-## 📊 Dashboard
-
-O painel de monitoramento exibe:
-- ✅ Status do sistema (Online/Offline)
-- 📁 Lista de arquivos processados
-- 🏢 Lista de empresas
-- 🔍 Filtro por data (Hoje, Ontem, 7 dias)
-- 📜 Histórico de processamentos
-- 🔄 Botão de reprocessamento para arquivos com erro
-- 📍 Indicação de onde cada arquivo foi salvo
-
-## ⚠️ Tratamento de Erros
-
-- **Login falhou:** O robô registra o erro no banco e exibe no dashboard
-- **Download falhou:** Arquivo é marcado como ERRO com mensagem detalhada
-- **Identificação falhou:** Arquivo é processado com tipo "DESCONHECIDO"
-- **Reprocessamento:** Arquivos com erro podem ser reprocessados pelo dashboard
+### Testes Automatizados
+O projeto conta com mais de 80 testes unitarios e de integracao cobrindo ambas as camadas (frontend e backend), com pipeline de CI configurada via GitHub Actions.
+- Para testar o backend: No diretorio `/backend`, com o ambiente ativado, execute `pytest -v`
+- Para testar o frontend: No diretorio `/frontend`, execute `npm run test`
