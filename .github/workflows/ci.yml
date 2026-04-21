@@ -1,0 +1,60 @@
+name: CI - Testes RPA
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test-backend:
+    name: Backend Tests (Python)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+      
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        
+    - name: Instalar dependências
+      working-directory: ./backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Instalar pacotes de teste adicionais, caso não estejam no requirements.txt
+        pip install pytest pytest-asyncio httpx
+        
+    - name: Rodar testes do Backend (Pytest)
+      working-directory: ./backend
+      run: |
+        pytest -v
+
+  test-frontend:
+    name: Frontend Tests (React)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+      
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './frontend/package-lock.json'
+        
+    - name: Instalar dependências
+      working-directory: ./frontend
+      run: |
+        npm install
+        
+    - name: Rodar testes do Frontend (Vitest)
+      working-directory: ./frontend
+      run: |
+        npm run test
