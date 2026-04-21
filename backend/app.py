@@ -3,12 +3,29 @@ API principal do sistema RPA com FastAPI.
 """
 import asyncio
 import shutil
+import sys
+import os
+import platform
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 from dotenv import load_dotenv
 
-load_dotenv()  # Carrega variáveis do .env automaticamente
+if sys.platform == "win32":
+    _real_uname = platform.uname
+    def _fast_uname():
+        from collections import namedtuple
+        UnameResult = namedtuple("uname_result", ["system", "node", "release", "version", "machine"])
+        return UnameResult(
+            system="Windows",
+            node=os.environ.get("COMPUTERNAME", "Windows"),
+            release=str(sys.getwindowsversion().major),
+            version=str(sys.getwindowsversion().build),
+            machine=os.environ.get("PROCESSOR_ARCHITECTURE", "AMD64")
+        )
+    platform.uname = _fast_uname
+
+load_dotenv()  
 
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
