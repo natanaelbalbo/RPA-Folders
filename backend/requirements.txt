@@ -1,0 +1,28 @@
+# FastAPI
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# Banco de Dados
+sqlalchemy==2.0.36
+aiosqlite==0.21.0
+
+# Google Drive API
+google-api-python-client==2.159.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.1
+
+# Leitura de arquivos
+pdfplumber==0.11.4
+lxml==5.3.0
+ofxparse==0.21
+
+# Automação Web
+playwright==1.49.1
+
+# Geração de PDFs fake (para testes)
+reportlab==4.2.5
+
+# Utilitários
+python-dotenv==1.0.1
+pydantic==2.10.4

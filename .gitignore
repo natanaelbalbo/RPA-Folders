@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.env
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Database
+*.db
+*.sqlite3
+
+# Credentials (NEVER commit)
+backend/credentials/*.json
+!backend/credentials/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Build
+frontend/dist/
