@@ -104,9 +104,9 @@ export function ArquivosPage({ onMenuClick }) {
                 className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer sm:col-span-1 col-span-2"
               >
                 <option value="">Qualquer data</option>
-                <option value="hoje">Hoje</option>
-                <option value="ontem">Ontem</option>
-                <option value="7dias">7 dias</option>
+                <option value="Hoje">Hoje</option>
+                <option value="Ontem">Ontem</option>
+                <option value="7 Dias">7 dias</option>
               </select>
             </div>
           </div>

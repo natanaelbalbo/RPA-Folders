@@ -20,6 +20,7 @@ import {
   getArquivos,
   getEmpresas,
   getHistorico,
+  processarDrive,
 } from "@/api/apiService";
 
 export function DashboardPage({ onMenuClick }) {
@@ -32,11 +33,12 @@ export function DashboardPage({ onMenuClick }) {
   const [arquivos, setArquivos] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [historico, setHistorico] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filtroPeriodo, setFiltroPeriodo] = useState("hoje");
+  const [isFetching, setIsFetching] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [filtroPeriodo, setFiltroPeriodo] = useState("Todos");
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (silent = false) => {
+    if (!silent) setIsFetching(true);
     try {
       const [statusRes, arquivosRes, empresasRes, historicoRes] =
         await Promise.all([
@@ -53,13 +55,26 @@ export function DashboardPage({ onMenuClick }) {
     } catch (err) {
       console.error("Erro ao carregar dados do dashboard:", err);
     } finally {
-      setLoading(false);
+      setIsFetching(false);
+    }
+  };
+
+  const handleProcessar = async () => {
+    setIsProcessing(true);
+    try {
+      await processarDrive();
+      await fetchData(true); // Recarrega dados silenciosamente após processar
+    } catch (err) {
+      console.error("Erro ao processar Drive:", err);
+      alert("Erro ao iniciar processamento do Google Drive.");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 30000); // Auto-refresh a cada 30s
+    const interval = setInterval(() => fetchData(true), 30000); // Auto-refresh silencioso
     return () => clearInterval(interval);
   }, [filtroPeriodo]);
 
@@ -79,13 +94,14 @@ export function DashboardPage({ onMenuClick }) {
             <span className="text-sm font-medium text-foreground">Sistema Online</span>
           </div>
           <div className="flex items-center gap-2">
-             <Button variant="ghost" size="sm" onClick={fetchData} className="cursor-pointer">
-              <RefreshCcw className={cn("h-4 w-4", loading && "animate-spin")} />
-              Atualizar
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-white cursor-pointer shadow-lg shadow-primary/20">
+            <Button
+              className="bg-primary hover:bg-primary/90 text-white cursor-pointer shadow-lg shadow-primary/20"
+              onClick={handleProcessar}
+              loading={isProcessing}
+              disabled={isProcessing}
+            >
               <TrendingUp className="h-4 w-4" />
-              Processar Google Drive
+              {isProcessing ? "Processando..." : "Processar Google Drive"}
             </Button>
           </div>
         </div>
@@ -150,7 +166,7 @@ export function DashboardPage({ onMenuClick }) {
                 Arquivos Processados
               </CardTitle>
               <div className="flex gap-1 bg-muted/50 p-1 rounded-lg">
-                {["todos", "hoje", "ontem", "7dias"].map((p) => (
+                {["Todos", "Hoje", "Ontem", "7 Dias"].map((p) => (
                   <button
                     key={p}
                     onClick={() => setFiltroPeriodo(p)}
@@ -193,7 +209,7 @@ export function DashboardPage({ onMenuClick }) {
                       </td>
                       <td className="px-3 py-3 text-center">
                         <Badge variant={arq.status === "SUCESSO" ? "success" : arq.status === "ERRO" ? "error" : "warning"} className="text-[10px]">
-                           {arq.status}
+                          {arq.status}
                         </Badge>
                       </td>
                       <td className="px-3 py-3 text-xs text-muted-foreground">

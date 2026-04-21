@@ -51,5 +51,5 @@ from datetime import datetime, timezone, timedelta
 BR_TIMEZONE = timezone(timedelta(hours=-3))
 
 def get_now_br():
-    """Retorna o datetime atual no fuso horário de Brasília (UTC-3)."""
-    return datetime.now(BR_TIMEZONE)
+    """Retorna o datetime atual no fuso horário de Brasília (UTC-3) como naive."""
+    return datetime.now(BR_TIMEZONE).replace(tzinfo=None)

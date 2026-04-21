@@ -109,7 +109,7 @@ def get_empresa(empresa_id: int, db: Session = Depends(get_db)):
 def list_arquivos(
     status: Optional[str] = None,
     tipo: Optional[str] = None,
-    periodo: Optional[str] = Query(None, description="hoje, ontem, 7dias"),
+    periodo: Optional[str] = Query(None, description="Todos, Hoje, Ontem, 7 Dias"),
     db: Session = Depends(get_db),
 ):
     """Lista arquivos processados com filtros opcionais."""
@@ -120,16 +120,19 @@ def list_arquivos(
     if tipo:
         query = query.filter(Arquivo.tipo == tipo.upper())
     if periodo:
-        now = get_now_br()
-        if periodo == "hoje":
+        # Convertemos para naive para evitar conflitos com SQLite que não armazena TZ
+        now = get_now_br().replace(tzinfo=None)
+        if periodo == "Hoje":
             start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        elif periodo == "ontem":
+        elif periodo == "Ontem":
             start = (now - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-            query = query.filter(Arquivo.created_at < now.replace(hour=0, minute=0, second=0, microsecond=0))
-        elif periodo == "7dias":
+            end = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            query = query.filter(Arquivo.created_at < end)
+        elif periodo == "7 Dias":
             start = now - timedelta(days=7)
         else:
             start = None
+        
         if start:
             query = query.filter(Arquivo.created_at >= start)
 
