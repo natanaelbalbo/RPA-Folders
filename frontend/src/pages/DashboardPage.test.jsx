@@ -110,4 +110,30 @@ describe('DashboardPage', () => {
       expect(screen.getByText(/Nenhum arquivo processado no período selecionado/i)).toBeInTheDocument();
     });
   });
+
+  it('deve exibir Sistema Online quando a API responde com sucesso', async () => {
+    render(
+      <BrowserRouter>
+        <DashboardPage onMenuClick={() => { }} />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Sistema Online')).toBeInTheDocument();
+    });
+  });
+
+  it('deve exibir Sistema Offline quando a API falha', async () => {
+    apiService.getStatus.mockRejectedValue(new Error('API error'));
+
+    render(
+      <BrowserRouter>
+        <DashboardPage onMenuClick={() => { }} />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Sistema Offline')).toBeInTheDocument();
+    });
+  });
 });

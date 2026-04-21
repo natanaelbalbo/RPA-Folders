@@ -36,6 +36,7 @@ export function DashboardPage({ onMenuClick }) {
   const [isFetching, setIsFetching] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [filtroPeriodo, setFiltroPeriodo] = useState("Todos");
+  const [isOnline, setIsOnline] = useState(true);
 
   const fetchData = async (silent = false) => {
     if (!silent) setIsFetching(true);
@@ -52,8 +53,10 @@ export function DashboardPage({ onMenuClick }) {
       setArquivos(arquivosRes);
       setEmpresas(empresasRes);
       setHistorico(historicoRes);
+      setIsOnline(true);
     } catch (err) {
       console.error("Erro ao carregar dados do dashboard:", err);
+      setIsOnline(false);
     } finally {
       setIsFetching(false);
     }
@@ -90,8 +93,8 @@ export function DashboardPage({ onMenuClick }) {
         {/* Ações Principais / Status */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-2 w-2 animate-pulse rounded-full bg-success" />
-            <span className="text-sm font-medium text-foreground">Sistema Online</span>
+            <div className={cn("flex h-2 w-2 animate-pulse rounded-full", isOnline ? "bg-success" : "bg-destructive")} />
+            <span className="text-sm font-medium text-foreground">{isOnline ? "Sistema Online" : "Sistema Offline"}</span>
           </div>
           <div className="flex items-center gap-2">
             <Button
