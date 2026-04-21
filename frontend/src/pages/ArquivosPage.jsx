@@ -141,7 +141,6 @@ export function ArquivosPage() {
                       <th className="px-4 py-3 font-medium text-muted-foreground">Status</th>
                       <th className="px-4 py-3 font-medium text-muted-foreground">Processado em</th>
                       <th className="px-4 py-3 font-medium text-muted-foreground">Destino</th>
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -218,20 +217,6 @@ export function ArquivosPage() {
                               );
                             })() : (
                               <span className="text-xs text-muted-foreground">—</span>
-                            )}
-                          </td>
-
-                          <td className="px-4 py-3">
-                            {arq.status === "ERRO" && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleReprocessar(arq.id)}
-                                loading={reprocessingId === arq.id}
-                              >
-                                <RotateCcw className="h-3.5 w-3.5" />
-                                Reprocessar
-                              </Button>
                             )}
                           </td>
                         </tr>
