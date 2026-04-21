@@ -34,8 +34,8 @@ export function Button({
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200",
         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
-        "disabled:pointer-events-none disabled:opacity-50",
-        "active:scale-[0.98]",
+        "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
+        "active:scale-[0.98] cursor-pointer",
         variants[variant],
         sizes[size],
         className
