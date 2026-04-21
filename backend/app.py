@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from config import UPLOADS_DIR, PROCESSED_DIRS, API_HOST, API_PORT
+from config import UPLOADS_DIR, PROCESSED_DIRS, API_HOST, API_PORT, get_now_br
 from database import get_db, init_db, Empresa, Arquivo, ProcessingLog
 
 app = FastAPI(
@@ -38,7 +38,7 @@ app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 # Estado global do sistema
 system_state = {
     "status": "online",
-    "started_at": datetime.utcnow().isoformat(),
+    "started_at": get_now_br().isoformat(),
     "processing": False,
 }
 
@@ -120,7 +120,7 @@ def list_arquivos(
     if tipo:
         query = query.filter(Arquivo.tipo == tipo.upper())
     if periodo:
-        now = datetime.utcnow()
+        now = get_now_br()
         if periodo == "hoje":
             start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif periodo == "ontem":
@@ -217,7 +217,7 @@ async def processar_drive(db: Session = Depends(get_db)):
                 arquivo.nome_processado = new_path.name
                 arquivo.caminho_destino = str(new_path)
                 arquivo.status = "SUCESSO"
-                arquivo.processed_at = datetime.utcnow()
+                arquivo.processed_at = get_now_br()
 
                 log = ProcessingLog(
                     arquivo_id=arquivo.id,
@@ -231,7 +231,7 @@ async def processar_drive(db: Session = Depends(get_db)):
             except Exception as e:
                 arquivo.status = "ERRO"
                 arquivo.error_message = str(e)
-                arquivo.processed_at = datetime.utcnow()
+                arquivo.processed_at = get_now_br()
                 
                 log = ProcessingLog(
                     arquivo_id=arquivo.id,
@@ -309,7 +309,7 @@ async def reprocessar_arquivo(arquivo_id: int, db: Session = Depends(get_db)):
         arquivo.nome_processado = new_path.name
         arquivo.caminho_destino = str(new_path)
         arquivo.status = "SUCESSO"
-        arquivo.processed_at = datetime.utcnow()
+        arquivo.processed_at = get_now_br()
 
         log = ProcessingLog(
             arquivo_id=arquivo.id,
@@ -325,7 +325,7 @@ async def reprocessar_arquivo(arquivo_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         arquivo.status = "ERRO"
         arquivo.error_message = str(e)
-        arquivo.processed_at = datetime.utcnow()
+        arquivo.processed_at = get_now_br()
 
         log = ProcessingLog(
             arquivo_id=arquivo.id,
@@ -388,7 +388,7 @@ async def upload_file(
         empresa_id=empresa_id,
         status="SUCESSO",
         caminho_destino=str(dest_path),
-        processed_at=datetime.utcnow(),
+        processed_at=get_now_br(),
     )
     db.add(arquivo)
 

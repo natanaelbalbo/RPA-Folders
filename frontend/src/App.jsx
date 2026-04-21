@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { LoginPage } from "@/pages/LoginPage";
@@ -9,25 +10,30 @@ import { AutomacaoPage } from "@/pages/AutomacaoPage";
 
 function AppLayout() {
   const { user } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
 
-  // Se não estiver logado, mostra a página de login
+  // Fecha a sidebar mobile ao mudar de rota
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location]);
+
   if (!user) {
     return <LoginPage />;
   }
 
-  // Logado: exibe o layout completo com sidebar
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
+    <div className="flex min-h-screen bg-background relative">
+      <Sidebar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      
       <main
-        className="flex-1 transition-all duration-300"
-        style={{ marginLeft: "240px" }}
+        className="flex-1 transition-all duration-300 w-full lg:ml-[240px]"
       >
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/sistema/*" element={<SistemaPage />} />
-          <Route path="/arquivos" element={<ArquivosPage />} />
-          <Route path="/automacao" element={<AutomacaoPage />} />
+          <Route path="/" element={<DashboardPage onMenuClick={() => setIsSidebarOpen(true)} />} />
+          <Route path="/sistema/*" element={<SistemaPage onMenuClick={() => setIsSidebarOpen(true)} />} />
+          <Route path="/arquivos" element={<ArquivosPage onMenuClick={() => setIsSidebarOpen(true)} />} />
+          <Route path="/automacao" element={<AutomacaoPage onMenuClick={() => setIsSidebarOpen(true)} />} />
         </Routes>
       </main>
     </div>

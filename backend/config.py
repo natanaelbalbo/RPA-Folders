@@ -45,3 +45,11 @@ FILE_TYPES = {
     "NF": {"extensoes": [".pdf"], "pasta_destino": "NF"},
     "EXTRATO": {"extensoes": [".ofx", ".pdf"], "pasta_destino": "Extratos"},
 }
+
+# Configurações de Fuso Horário (Brasília - UTC-3)
+from datetime import datetime, timezone, timedelta
+BR_TIMEZONE = timezone(timedelta(hours=-3))
+
+def get_now_br():
+    """Retorna o datetime atual no fuso horário de Brasília (UTC-3)."""
+    return datetime.now(BR_TIMEZONE)

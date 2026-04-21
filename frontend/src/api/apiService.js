@@ -17,7 +17,7 @@ export const getArquivos = (params = {}) =>
   api.get("/arquivos", { params }).then((r) => r.data);
 
 // ═══ PROCESSAMENTO ═══
-export const iniciarProcessamento = () =>
+export const processarDrive = () =>
   api.post("/processar").then((r) => r.data);
 
 export const reprocessarArquivo = (id) =>

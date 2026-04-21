@@ -7,7 +7,7 @@ from sqlalchemy import (
     ForeignKey, Text, Enum as SAEnum
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from config import DATABASE_URL
+from config import DATABASE_URL, get_now_br
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -21,7 +21,7 @@ class Empresa(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String(255), nullable=False)
     cnpj = Column(String(18), unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=get_now_br)
 
     arquivos = relationship("Arquivo", back_populates="empresa")
 
@@ -47,7 +47,7 @@ class Arquivo(Base):
     error_message = Column(Text, nullable=True)
     caminho_destino = Column(String(1000), nullable=True)
     drive_file_id = Column(String(255), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=get_now_br)
     processed_at = Column(DateTime, nullable=True)
 
     empresa = relationship("Empresa", back_populates="arquivos")
@@ -80,7 +80,7 @@ class ProcessingLog(Base):
     acao = Column(String(255), nullable=False)
     status = Column(String(50), nullable=False)  # INFO, SUCESSO, ERRO
     detalhes = Column(Text, nullable=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=get_now_br)
 
     arquivo = relationship("Arquivo", back_populates="logs")
 

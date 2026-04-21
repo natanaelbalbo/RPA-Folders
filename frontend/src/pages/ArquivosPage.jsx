@@ -5,12 +5,8 @@ import {
   FileSpreadsheet,
   Search,
   Filter,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Loader2,
-  RotateCcw,
   ExternalLink,
+  RotateCcw,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -25,7 +21,7 @@ const TIPO_ICONS = {
   EXTRATO: FileSpreadsheet,
 };
 
-export function ArquivosPage() {
+export function ArquivosPage({ onMenuClick }) {
   const [arquivos, setArquivos] = useState([]);
   const [filtroTipo, setFiltroTipo] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("");
@@ -46,18 +42,6 @@ export function ArquivosPage() {
     fetchArquivos();
   }, [filtroTipo, filtroStatus, filtroPeriodo]);
 
-  const handleReprocessar = async (id) => {
-    setReprocessingId(id);
-    try {
-      await reprocessarArquivo(id);
-      await fetchArquivos();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setReprocessingId(null);
-    }
-  };
-
   const filtered = arquivos.filter((a) => {
     if (!busca) return true;
     const term = busca.toLowerCase();
@@ -70,81 +54,89 @@ export function ArquivosPage() {
 
   return (
     <div className="min-h-screen">
-      <Header title="Arquivos" subtitle="Todos os arquivos processados" />
-      <div className="p-6 space-y-6">
-        {/* Filtros */}
+      <Header 
+        title="Arquivos" 
+        subtitle="Todos os arquivos processados" 
+        onMenuClick={onMenuClick} 
+      />
+      
+      <div className="p-4 lg:p-6 space-y-6">
+        {/* Filtros e Busca */}
         <Card>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative flex-1 min-w-[200px]">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Buscar por nome ou empresa..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
-                className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all"
               />
             </div>
 
-            <select
-              value={filtroTipo}
-              onChange={(e) => setFiltroTipo(e.target.value)}
-              className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Todos os tipos</option>
-              <option value="XML">XML (NF-e)</option>
-              <option value="NF">Nota Fiscal</option>
-              <option value="EXTRATO">Extrato</option>
-            </select>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <select
+                value={filtroTipo}
+                onChange={(e) => setFiltroTipo(e.target.value)}
+                className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+              >
+                <option value="">Tipos</option>
+                <option value="XML">XML</option>
+                <option value="NF">NF</option>
+                <option value="EXTRATO">Extrato</option>
+              </select>
 
-            <select
-              value={filtroStatus}
-              onChange={(e) => setFiltroStatus(e.target.value)}
-              className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Todos os status</option>
-              <option value="SUCESSO">Sucesso</option>
-              <option value="ERRO">Erro</option>
-              <option value="PENDENTE">Pendente</option>
-              <option value="PROCESSANDO">Processando</option>
-            </select>
+              <select
+                value={filtroStatus}
+                onChange={(e) => setFiltroStatus(e.target.value)}
+                className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+              >
+                <option value="">Status</option>
+                <option value="SUCESSO">Sucesso</option>
+                <option value="ERRO">Erro</option>
+                <option value="PENDENTE">Pendente</option>
+              </select>
 
-            <select
-              value={filtroPeriodo}
-              onChange={(e) => setFiltroPeriodo(e.target.value)}
-              className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Qualquer data</option>
-              <option value="hoje">Hoje</option>
-              <option value="ontem">Ontem</option>
-              <option value="7dias">Últimos 7 dias</option>
-            </select>
+              <select
+                value={filtroPeriodo}
+                onChange={(e) => setFiltroPeriodo(e.target.value)}
+                className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer sm:col-span-1 col-span-2"
+              >
+                <option value="">Qualquer data</option>
+                <option value="hoje">Hoje</option>
+                <option value="ontem">Ontem</option>
+                <option value="7dias">7 dias</option>
+              </select>
+            </div>
           </div>
         </Card>
 
-        {/* Tabela */}
-        <Card>
-          <CardContent>
-            {filtered.length === 0 ? (
-              <div className="py-16 text-center">
-                <FileText className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
-                <p className="text-sm text-muted-foreground">Nenhum arquivo encontrado</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border text-left">
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Arquivo</th>
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Tipo</th>
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Empresa</th>
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Status</th>
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Processado em</th>
-                      <th className="px-4 py-3 font-medium text-muted-foreground">Destino</th>
+        {/* Tabela de Arquivos */}
+        <Card className="overflow-hidden">
+          <CardContent className="p-0 sm:p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[800px]">
+                <thead>
+                  <tr className="border-b border-border text-left">
+                    <th className="px-4 py-4 font-medium text-muted-foreground">Arquivo</th>
+                    <th className="px-4 py-4 font-medium text-muted-foreground text-center">Tipo</th>
+                    <th className="px-4 py-4 font-medium text-muted-foreground">Empresa</th>
+                    <th className="px-4 py-4 font-medium text-muted-foreground text-center">Status</th>
+                    <th className="px-4 py-4 font-medium text-muted-foreground">Data</th>
+                    <th className="px-4 py-4 font-medium text-muted-foreground">Destino</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="py-20 text-center">
+                        <FileText className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
+                        <p className="text-sm text-muted-foreground">Nenhum arquivo encontrado</p>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((arq, i) => {
+                  ) : (
+                    filtered.map((arq, i) => {
                       const TipoIcon = TIPO_ICONS[arq.tipo] || FileText;
                       return (
                         <tr
@@ -152,53 +144,44 @@ export function ArquivosPage() {
                           className="border-b border-border/50 transition-colors hover:bg-muted/30 animate-fade-in"
                           style={{ animationDelay: `${i * 0.02}s` }}
                         >
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <TipoIcon className="h-4 w-4 text-muted-foreground shrink-0" />
-                              <div>
-                                <p className="font-medium text-foreground truncate max-w-[250px]">
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0">
+                                <TipoIcon className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                              <div className="overflow-hidden">
+                                <p className="font-medium text-foreground truncate max-w-[200px]" title={arq.nome_processado || arq.nome_original}>
                                   {arq.nome_processado || arq.nome_original}
                                 </p>
-                                {arq.nome_processado && arq.nome_original !== arq.nome_processado && (
-                                  <p className="text-xs text-muted-foreground truncate max-w-[250px]">
-                                    {arq.nome_original}
-                                  </p>
-                                )}
+                                <p className="text-[10px] text-muted-foreground truncate max-w-[200px]">
+                                  {arq.nome_original}
+                                </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3">
-                            <Badge>{arq.tipo || "—"}</Badge>
+                          <td className="px-4 py-4 text-center">
+                            <Badge variant="outline" className="text-[10px]">{arq.tipo}</Badge>
                           </td>
-                          <td className="px-4 py-3 text-foreground">
-                            <div>
-                              <p>{arq.empresa_nome || "—"}</p>
-                              {arq.empresa_cnpj && (
-                                <p className="text-xs text-muted-foreground">{arq.empresa_cnpj}</p>
-                              )}
-                            </div>
+                          <td className="px-4 py-4">
+                            <p className="text-xs font-medium text-foreground">{arq.empresa_nome || "—"}</p>
+                            <p className="text-[10px] text-muted-foreground">{arq.empresa_cnpj}</p>
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-4 text-center">
                             <Badge
                               variant={
                                 arq.status === "SUCESSO" ? "success" :
-                                arq.status === "ERRO" ? "error" :
-                                arq.status === "PROCESSANDO" ? "warning" : "outline"
+                                arq.status === "ERRO" ? "error" : "warning"
                               }
+                              className="text-[10px]"
                             >
                               {arq.status}
                             </Badge>
-                            {arq.error_message && (
-                              <p className="mt-1 text-xs text-destructive truncate max-w-[200px]" title={arq.error_message}>
-                                {arq.error_message}
-                              </p>
-                            )}
                           </td>
-                          <td className="px-4 py-3 text-muted-foreground">
-                            {formatDate(arq.processed_at)}
+                          <td className="px-4 py-4 text-xs text-muted-foreground whitespace-nowrap">
+                            {formatDate(arq.created_at)}
                           </td>
-                          <td className="px-4 py-3">
-                            {arq.caminho_destino ? (() => {
+                          <td className="px-4 py-4">
+                             {arq.caminho_destino ? (() => {
                               const url = getFileUrl(arq.caminho_destino);
                               const filename = arq.caminho_destino.split(/[/\\]/).pop();
                               return url ? (
@@ -206,26 +189,25 @@ export function ArquivosPage() {
                                   href={url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  title="Abrir arquivo"
-                                  className="flex items-center gap-1 text-xs text-primary hover:underline truncate max-w-[150px]"
+                                  className="flex items-center gap-1 text-[10px] text-primary hover:underline transition-all cursor-pointer truncate max-w-[120px]"
                                 >
                                   <ExternalLink className="h-3 w-3 shrink-0" />
                                   {filename}
                                 </a>
                               ) : (
-                                <span className="text-xs text-muted-foreground truncate max-w-[150px] block">{filename}</span>
+                                <span className="text-[10px] text-muted-foreground truncate max-w-[120px] block">{filename}</span>
                               );
                             })() : (
-                              <span className="text-xs text-muted-foreground">—</span>
+                              <span className="text-[10px] text-muted-foreground">—</span>
                             )}
                           </td>
                         </tr>
                       );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
       </div>
