@@ -8,6 +8,13 @@ import sys
 # Adiciona o diretório backend ao path para importar os módulos
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Define variáveis de ambiente falsas para que o config.py não quebre ao ser importado no CI/Testes
+os.environ.setdefault("API_PORT", "8000")
+os.environ.setdefault("API_HOST", "0.0.0.0")
+os.environ.setdefault("SISTEMA_WEB_URL", "http://localhost:5173")
+os.environ.setdefault("SISTEMA_LOGIN_USER", "test_user")
+os.environ.setdefault("SISTEMA_LOGIN_PASS", "test_pass")
+
 from database import Base, get_db
 from app import app
 
