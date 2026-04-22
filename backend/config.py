@@ -31,13 +31,13 @@ for d in PROCESSED_DIRS.values():
     d.mkdir(exist_ok=True)
 
 # Sistema Web Destino (para automação Playwright)
-SISTEMA_WEB_URL = os.getenv("SISTEMA_WEB_URL", "http://localhost:5173")
-SISTEMA_LOGIN_USER = os.getenv("SISTEMA_LOGIN_USER", "admin")
-SISTEMA_LOGIN_PASS = os.getenv("SISTEMA_LOGIN_PASS", "admin123")
+SISTEMA_WEB_URL = os.getenv("SISTEMA_WEB_URL")
+SISTEMA_LOGIN_USER = os.getenv("SISTEMA_LOGIN_USER")
+SISTEMA_LOGIN_PASS = os.getenv("SISTEMA_LOGIN_PASS")
 
 # Configurações do servidor
-API_HOST = os.getenv("API_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("API_PORT", "8000"))
+API_HOST = os.getenv("API_HOST")
+API_PORT = int(os.getenv("API_PORT"))
 
 # Tipos de arquivo suportados
 FILE_TYPES = {

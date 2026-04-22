@@ -5,25 +5,25 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// ═══ STATUS ═══
+// Status
 export const getStatus = () => api.get("/status").then((r) => r.data);
 
-// ═══ EMPRESAS ═══
+// Empresas
 export const getEmpresas = () => api.get("/empresas").then((r) => r.data);
 export const getEmpresa = (id) => api.get(`/empresas/${id}`).then((r) => r.data);
 
-// ═══ ARQUIVOS ═══
+// Arquivos
 export const getArquivos = (params = {}) =>
   api.get("/arquivos", { params }).then((r) => r.data);
 
-// ═══ PROCESSAMENTO ═══
+// Processamento
 export const processarDrive = () =>
   api.post("/processar").then((r) => r.data);
 
 export const reprocessarArquivo = (id) =>
   api.post(`/reprocessar/${id}`).then((r) => r.data);
 
-// ═══ UPLOAD ═══
+// Upload
 export const uploadArquivo = (empresaId, tipo, file) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -34,11 +34,11 @@ export const uploadArquivo = (empresaId, tipo, file) => {
     .then((r) => r.data);
 };
 
-// ═══ AUTENTICAÇÃO ═══
+// Autenticação
 export const login = (usuario, senha) =>
   api.post("/auth/login", { usuario, senha }).then((r) => r.data);
 
-// ═══ HISTÓRICO ═══
+// Histórico
 export const getHistorico = (limit = 50) =>
   api.get("/historico", { params: { limit } }).then((r) => r.data);
 
