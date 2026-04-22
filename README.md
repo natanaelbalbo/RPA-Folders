@@ -207,3 +207,5 @@ O sistema foi preparado para ser resiliente a falhas comuns de RPA:
 - **Download falhou ou Arquivo Inacessível:** O arquivo é marcado localmente com status de `ERRO` contendo o stack trace.
 - **Identificação não detectada:** Se o arquivo for impossível de ler, o tipo assume `DESCONHECIDO` e evita a quebra do robô.
 - **Recuperação e Reprocessamento:** Existe um fallback e botões diretos no dashboard onde arquivos com o estado de erro podem ser ativamente reprocessados de forma síncrona.
+
+
